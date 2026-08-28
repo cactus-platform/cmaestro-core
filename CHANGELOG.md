@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/cactus-platform/cmaestro-core/compare/v1.0.0...v1.0.1) (2026-08-28)
+
+
+### Bug Fixes
+
+* update workflow name in release.yaml ([cae2ea0](https://github.com/cactus-platform/cmaestro-core/commit/cae2ea0525faa18e98a50300937de065c18404c0))
+
 # 1.0.0 (2026-08-28)
 
 

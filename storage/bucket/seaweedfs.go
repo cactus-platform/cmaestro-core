@@ -25,6 +25,7 @@ import (
 	"github.com/aws/smithy-go"
 )
 
+// Constants
 const (
 	defaultRegion      = "us-east-1"
 	defaultPartSize    = 16 * 1024 * 1024 // 16 MiB

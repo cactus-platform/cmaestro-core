@@ -1,4 +1,4 @@
-module github.com/cactus-platform/core
+module github.com/cactus-platform/cmaestro-core
 
 go 1.26.3
 

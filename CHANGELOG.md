@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/cactus-platform/cmaestro-core/compare/v1.2.0...v1.2.1) (2026-08-30)
+
+
+### Bug Fixes
+
+* Repository management takes Repository model as input ([bb8122b](https://github.com/cactus-platform/cmaestro-core/commit/bb8122b720b50815560ce013f0e3d22f9d9a670e))
+
 # [1.2.0](https://github.com/cactus-platform/cmaestro-core/compare/v1.1.0...v1.2.0) (2026-08-30)
 
 

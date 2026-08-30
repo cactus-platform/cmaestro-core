@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/cactus-platform/cmaestro-core/compare/v1.1.0...v1.2.0) (2026-08-30)
+
+
+### Features
+
+* adds repository management foundation (Model, Repository, Service) ([bfc6ac8](https://github.com/cactus-platform/cmaestro-core/commit/bfc6ac805401cbcd6d4da666f7ff2f5b34b03a51))
+
 # [1.1.0](https://github.com/cactus-platform/cmaestro-core/compare/v1.0.1...v1.1.0) (2026-08-30)
 
 

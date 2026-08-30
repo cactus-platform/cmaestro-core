@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/cactus-platform/cmaestro-core/compare/v1.3.0...v1.3.1) (2026-08-30)
+
+
+### Bug Fixes
+
+* updates repository to a one-to-many relationship with artifact ([63140f5](https://github.com/cactus-platform/cmaestro-core/commit/63140f51dcd83cfd1ec34ce3f40dd97317dc87e2))
+
 # [1.3.0](https://github.com/cactus-platform/cmaestro-core/compare/v1.2.1...v1.3.0) (2026-08-30)
 
 

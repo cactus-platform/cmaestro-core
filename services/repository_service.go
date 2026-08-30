@@ -11,6 +11,7 @@ import (
 
 type RepositoryService interface {
 	Create(ctx context.Context, repository *models.Repository) error
+	CreateRevision(ctx context.Context, repository *models.Repository) error
 	Get(ctx context.Context, id uuid.UUID) (*models.Repository, error)
 	Update(ctx context.Context, repository *models.Repository) error
 	Exists(ctx context.Context, id uuid.UUID) (bool, error)
@@ -47,6 +48,17 @@ func (s *RepositoryServiceImpl) Create(
 	return s.repository.Create(ctx, repository)
 }
 
+func (s *RepositoryServiceImpl) CreateRevision(
+	ctx context.Context,
+	repository *models.Repository,
+) error {
+	if repository == nil {
+		return errors.New("repository cannot be nil")
+	}
+
+	return s.repository.CreateRevision(ctx, repository)
+}
+
 func (s *RepositoryServiceImpl) Update(
 	ctx context.Context,
 	repository *models.Repository,
@@ -79,7 +91,7 @@ func (s *RepositoryServiceImpl) CreateOrUpdate(
 	}
 
 	if exists {
-		return s.repository.Update(ctx, repository)
+		return s.repository.CreateRevision(ctx, repository)
 	}
 
 	return s.repository.Create(ctx, repository)

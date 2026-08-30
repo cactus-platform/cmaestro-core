@@ -2,27 +2,33 @@ package repositories
 
 import (
 	"context"
+	"errors"
 
 	"github.com/cactus-platform/cmaestro-core/models"
+	"github.com/cactus-platform/cmaestro-core/storage/sql"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
+
+var ErrRepositoryNotFound = errors.New("repository not found")
 
 type RepositoryRepository interface {
 	Create(ctx context.Context, repository *models.Repository) error
+	CreateRevision(ctx context.Context, repository *models.Repository) error
 	Get(ctx context.Context, id uuid.UUID) (*models.Repository, error)
 	Update(ctx context.Context, repository *models.Repository) error
 	Exists(ctx context.Context, id uuid.UUID) (bool, error)
 }
 
 type RepositoryRepositoryImpl struct {
-	artifactRepository ArtifactRepository
+	db *sql.Client
 }
 
 func NewRepositoryRepository(
-	artifactRepository ArtifactRepository,
+	db *sql.Client,
 ) RepositoryRepository {
 	return &RepositoryRepositoryImpl{
-		artifactRepository: artifactRepository,
+		db: db,
 	}
 }
 
@@ -30,12 +36,15 @@ func (r *RepositoryRepositoryImpl) Get(
 	ctx context.Context,
 	id uuid.UUID,
 ) (*models.Repository, error) {
-	artifact, err := r.artifactRepository.GetArtifact(ctx, id)
-	if err != nil {
-		return nil, err
+	var repository models.Repository
+	err := r.db.WithContext(ctx).
+		Preload("Artifacts").
+		Where("id = ?", id).
+		First(&repository).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, ErrRepositoryNotFound
 	}
-
-	return repositoryFromArtifact(artifact), nil
+	return &repository, err
 }
 
 func (r *RepositoryRepositoryImpl) Create(
@@ -43,10 +52,46 @@ func (r *RepositoryRepositoryImpl) Create(
 	repository *models.Repository,
 ) error {
 	if repository == nil {
-		return nil
+		return errors.New("repository cannot be nil")
 	}
 
-	return r.artifactRepository.CreateArtifact(ctx, artifactFromRepository(repository))
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(repository).Error; err != nil {
+			return err
+		}
+		for _, artifact := range repository.Artifacts {
+			if artifact == nil {
+				continue
+			}
+			artifact.RepositoryID = repository.ID
+			if err := tx.Create(artifact).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+}
+
+func (r *RepositoryRepositoryImpl) CreateRevision(
+	ctx context.Context,
+	repository *models.Repository,
+) error {
+	if repository == nil {
+		return errors.New("repository cannot be nil")
+	}
+
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		for _, artifact := range repository.Artifacts {
+			if artifact == nil {
+				continue
+			}
+			artifact.RepositoryID = repository.ID
+			if err := tx.Create(artifact).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 func (r *RepositoryRepositoryImpl) Update(
@@ -54,45 +99,27 @@ func (r *RepositoryRepositoryImpl) Update(
 	repository *models.Repository,
 ) error {
 	if repository == nil {
-		return nil
+		return errors.New("repository cannot be nil")
 	}
 
-	return r.artifactRepository.UpdateArtifact(ctx, artifactFromRepository(repository))
+	result := r.db.WithContext(ctx).
+		Model(&models.Repository{}).
+		Where("id = ?", repository.ID).
+		Updates(repository)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return ErrRepositoryNotFound
+	}
+	return nil
 }
 
 func (r *RepositoryRepositoryImpl) Exists(
 	ctx context.Context,
 	id uuid.UUID,
 ) (bool, error) {
-	return r.artifactRepository.ArtifactExists(ctx, id)
-}
-
-func artifactFromRepository(repository *models.Repository) *models.Artifact {
-	return &models.Artifact{
-		Id:        repository.ID,
-		Name:      repository.Name,
-		Path:      repository.Path,
-		Revision:  repository.Revision,
-		Hash:      repository.Hash,
-		Size:      repository.Size,
-		Format:    repository.Format,
-		Status:    repository.Status,
-		CreatedAt: repository.CreatedAt,
-		UpdatedAt: repository.UpdatedAt,
-	}
-}
-
-func repositoryFromArtifact(artifact *models.Artifact) *models.Repository {
-	return &models.Repository{
-		ID:        artifact.Id,
-		Name:      artifact.Name,
-		Path:      artifact.Path,
-		Revision:  artifact.Revision,
-		Hash:      artifact.Hash,
-		Size:      artifact.Size,
-		Format:    artifact.Format,
-		Status:    artifact.Status,
-		CreatedAt: artifact.CreatedAt,
-		UpdatedAt: artifact.UpdatedAt,
-	}
+	var count int64
+	err := r.db.WithContext(ctx).Model(&models.Repository{}).Where("id = ?", id).Count(&count).Error
+	return count > 0, err
 }

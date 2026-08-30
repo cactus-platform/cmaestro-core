@@ -10,11 +10,11 @@ import (
 )
 
 type RepositoryService interface {
-	Create(ctx context.Context, repository *models.Artifact) error
-	Get(ctx context.Context, id uuid.UUID) (*models.Artifact, error)
-	Update(ctx context.Context, repository *models.Artifact) error
+	Create(ctx context.Context, repository *models.Repository) error
+	Get(ctx context.Context, id uuid.UUID) (*models.Repository, error)
+	Update(ctx context.Context, repository *models.Repository) error
 	Exists(ctx context.Context, id uuid.UUID) (bool, error)
-	CreateOrUpdate(ctx context.Context, repository *models.Artifact) error
+	CreateOrUpdate(ctx context.Context, repository *models.Repository) error
 }
 
 type RepositoryServiceImpl struct {
@@ -32,13 +32,13 @@ func NewRepositoryService(
 func (s *RepositoryServiceImpl) Get(
 	ctx context.Context,
 	id uuid.UUID,
-) (*models.Artifact, error) {
+) (*models.Repository, error) {
 	return s.repository.Get(ctx, id)
 }
 
 func (s *RepositoryServiceImpl) Create(
 	ctx context.Context,
-	repository *models.Artifact,
+	repository *models.Repository,
 ) error {
 	if repository == nil {
 		return errors.New("repository cannot be nil")
@@ -49,7 +49,7 @@ func (s *RepositoryServiceImpl) Create(
 
 func (s *RepositoryServiceImpl) Update(
 	ctx context.Context,
-	repository *models.Artifact,
+	repository *models.Repository,
 ) error {
 	if repository == nil {
 		return errors.New("repository cannot be nil")
@@ -67,13 +67,13 @@ func (s *RepositoryServiceImpl) Exists(
 
 func (s *RepositoryServiceImpl) CreateOrUpdate(
 	ctx context.Context,
-	repository *models.Artifact,
+	repository *models.Repository,
 ) error {
 	if repository == nil {
 		return errors.New("repository cannot be nil")
 	}
 
-	exists, err := s.repository.Exists(ctx, repository.Id)
+	exists, err := s.repository.Exists(ctx, repository.ID)
 	if err != nil {
 		return err
 	}

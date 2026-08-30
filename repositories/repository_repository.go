@@ -8,9 +8,9 @@ import (
 )
 
 type RepositoryRepository interface {
-	Create(ctx context.Context, repository *models.Artifact) error
-	Get(ctx context.Context, id uuid.UUID) (*models.Artifact, error)
-	Update(ctx context.Context, repository *models.Artifact) error
+	Create(ctx context.Context, repository *models.Repository) error
+	Get(ctx context.Context, id uuid.UUID) (*models.Repository, error)
+	Update(ctx context.Context, repository *models.Repository) error
 	Exists(ctx context.Context, id uuid.UUID) (bool, error)
 }
 
@@ -29,22 +29,35 @@ func NewRepositoryRepository(
 func (r *RepositoryRepositoryImpl) Get(
 	ctx context.Context,
 	id uuid.UUID,
-) (*models.Artifact, error) {
-	return r.artifactRepository.GetArtifact(ctx, id)
+) (*models.Repository, error) {
+	artifact, err := r.artifactRepository.GetArtifact(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return repositoryFromArtifact(artifact), nil
 }
 
 func (r *RepositoryRepositoryImpl) Create(
 	ctx context.Context,
-	repository *models.Artifact,
+	repository *models.Repository,
 ) error {
-	return r.artifactRepository.CreateArtifact(ctx, repository)
+	if repository == nil {
+		return nil
+	}
+
+	return r.artifactRepository.CreateArtifact(ctx, artifactFromRepository(repository))
 }
 
 func (r *RepositoryRepositoryImpl) Update(
 	ctx context.Context,
-	repository *models.Artifact,
+	repository *models.Repository,
 ) error {
-	return r.artifactRepository.UpdateArtifact(ctx, repository)
+	if repository == nil {
+		return nil
+	}
+
+	return r.artifactRepository.UpdateArtifact(ctx, artifactFromRepository(repository))
 }
 
 func (r *RepositoryRepositoryImpl) Exists(
@@ -52,4 +65,34 @@ func (r *RepositoryRepositoryImpl) Exists(
 	id uuid.UUID,
 ) (bool, error) {
 	return r.artifactRepository.ArtifactExists(ctx, id)
+}
+
+func artifactFromRepository(repository *models.Repository) *models.Artifact {
+	return &models.Artifact{
+		Id:        repository.ID,
+		Name:      repository.Name,
+		Path:      repository.Path,
+		Revision:  repository.Revision,
+		Hash:      repository.Hash,
+		Size:      repository.Size,
+		Format:    repository.Format,
+		Status:    repository.Status,
+		CreatedAt: repository.CreatedAt,
+		UpdatedAt: repository.UpdatedAt,
+	}
+}
+
+func repositoryFromArtifact(artifact *models.Artifact) *models.Repository {
+	return &models.Repository{
+		ID:        artifact.Id,
+		Name:      artifact.Name,
+		Path:      artifact.Path,
+		Revision:  artifact.Revision,
+		Hash:      artifact.Hash,
+		Size:      artifact.Size,
+		Format:    artifact.Format,
+		Status:    artifact.Status,
+		CreatedAt: artifact.CreatedAt,
+		UpdatedAt: artifact.UpdatedAt,
+	}
 }

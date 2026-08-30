@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/cactus-platform/cmaestro-core/compare/v1.0.1...v1.1.0) (2026-08-30)
+
+
+### Features
+
+* moves artifact+ingest controls from cactus to cactus-core ([09d55ea](https://github.com/cactus-platform/cmaestro-core/commit/09d55eab5dd0dae4d81d547fa4a38c044d04fc38))
+
 ## [1.0.1](https://github.com/cactus-platform/cmaestro-core/compare/v1.0.0...v1.0.1) (2026-08-28)
 
 

@@ -81,6 +81,19 @@ func (r *RepositoryRepositoryImpl) CreateRevision(
 	}
 
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		result := tx.Model(&models.Repository{}).
+			Where("id = ?", repository.ID).
+			Updates(map[string]any{
+				"status":     repository.Status,
+				"updated_at": repository.UpdatedAt,
+			})
+		if result.Error != nil {
+			return result.Error
+		}
+		if result.RowsAffected == 0 {
+			return ErrRepositoryNotFound
+		}
+
 		for _, artifact := range repository.Artifacts {
 			if artifact == nil {
 				continue

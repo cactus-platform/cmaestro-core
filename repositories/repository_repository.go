@@ -56,7 +56,7 @@ func (r *RepositoryRepositoryImpl) Create(
 	}
 
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		if err := tx.Create(repository).Error; err != nil {
+		if err := tx.Omit("Artifacts").Create(repository).Error; err != nil {
 			return err
 		}
 		for _, artifact := range repository.Artifacts {

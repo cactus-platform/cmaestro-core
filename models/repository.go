@@ -7,8 +7,8 @@ import (
 )
 
 type Repository struct {
-	ID        uuid.UUID   `json:"id"`
-	Name      string      `json:"name"`
+	ID        uuid.UUID   `json:"id" gorm:"primaryKey"`
+	Name      string      `json:"name" gorm:"unique"`
 	Status    string      `json:"status"`
 	Artifacts []*Artifact `json:"artifacts" gorm:"foreignKey:RepositoryID"`
 

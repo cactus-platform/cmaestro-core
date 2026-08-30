@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/cactus-platform/cmaestro-core/compare/v1.3.1...v1.3.2) (2026-08-30)
+
+
+### Bug Fixes
+
+* changes Repository::CreateRevision behaviour if ID is used ([902afb4](https://github.com/cactus-platform/cmaestro-core/commit/902afb41f2325b0dd2b5c9d86f35af3aad28c044))
+
 ## [1.3.1](https://github.com/cactus-platform/cmaestro-core/compare/v1.3.0...v1.3.1) (2026-08-30)
 
 

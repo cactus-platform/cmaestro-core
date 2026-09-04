@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/cactus-platform/cmaestro-core/compare/v1.3.2...v1.4.0) (2026-09-04)
+
+
+### Features
+
+* reworks artifact management ([f7f849c](https://github.com/cactus-platform/cmaestro-core/commit/f7f849c8c66d95cf6e2b3a4d5821b16b970c2fe7))
+
 ## [1.3.2](https://github.com/cactus-platform/cmaestro-core/compare/v1.3.1...v1.3.2) (2026-08-30)
 
 

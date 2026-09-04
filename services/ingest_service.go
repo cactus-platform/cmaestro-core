@@ -12,7 +12,7 @@ import (
 )
 
 type IngestService interface {
-	Ingest(ctx context.Context, repository models.Repository) error
+	Ingest(ctx context.Context, repository *models.Repository) error
 }
 
 type IngestServiceImpl struct {
@@ -23,7 +23,7 @@ func NewIngestService(keyVal *keyval.Client) IngestService {
 	return &IngestServiceImpl{keyVal: keyVal}
 }
 
-func (s *IngestServiceImpl) Ingest(ctx context.Context, repository models.Repository) error {
+func (s *IngestServiceImpl) Ingest(ctx context.Context, repository *models.Repository) error {
 	if s.keyVal == nil {
 		return errors.New("key-val client cannot be nil")
 	}

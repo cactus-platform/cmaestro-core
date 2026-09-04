@@ -44,7 +44,7 @@ func (r *ArtifactRepositoryImpl) CreateArtifact(
 		var count int64
 
 		err := tx.Model(&models.Artifact{}).
-			Where("id = ?", artifact.Id).
+			Where("id = ?", artifact.ID).
 			Count(&count).
 			Error
 		if err != nil {
@@ -89,7 +89,7 @@ func (r *ArtifactRepositoryImpl) UpdateArtifact(
 
 	result := r.db.WithContext(ctx).
 		Model(&models.Artifact{}).
-		Where("id = ?", artifact.Id).
+		Where("id = ?", artifact.ID).
 		Updates(artifact)
 
 	if result.Error != nil {

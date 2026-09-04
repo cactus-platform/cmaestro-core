@@ -9,11 +9,10 @@ import (
 	"github.com/cactus-platform/cmaestro-core/models"
 
 	"github.com/cactus-platform/cmaestro-core/storage/keyval"
-	"github.com/google/uuid"
 )
 
 type IngestService interface {
-	Ingest(ctx context.Context, artifactID uuid.UUID) error
+	Ingest(ctx context.Context, repository models.Repository) error
 }
 
 type IngestServiceImpl struct {
@@ -24,7 +23,7 @@ func NewIngestService(keyVal *keyval.Client) IngestService {
 	return &IngestServiceImpl{keyVal: keyVal}
 }
 
-func (s *IngestServiceImpl) Ingest(ctx context.Context, artifactID uuid.UUID) error {
+func (s *IngestServiceImpl) Ingest(ctx context.Context, repository models.Repository) error {
 	if s.keyVal == nil {
 		return errors.New("key-val client cannot be nil")
 	}
@@ -33,19 +32,24 @@ func (s *IngestServiceImpl) Ingest(ctx context.Context, artifactID uuid.UUID) er
 		return err
 	}
 
+	if len(repository.Artifacts) == 0 {
+		return errors.New("no artifacts defined")
+	}
+
 	now := time.Now().UTC()
 	value, err := json.Marshal(models.Ingest{
-		ArtifactID: artifactID,
-		Status:     models.IngestStatusPending,
-		CreatedAt:  now,
-		UpdatedAt:  now,
+		RepositoryID: repository.ID,
+		Revision:     repository.Artifacts[0].ID,
+		Status:       models.IngestStatusPending,
+		CreatedAt:    now,
+		UpdatedAt:    now,
 	})
 	if err != nil {
 		return err
 	}
 
 	return s.keyVal.Set(
-		"ingest:"+artifactID.String(),
+		"ingest:"+repository.ID.String(),
 		string(value),
 		-1,
 	)

@@ -35,7 +35,7 @@ func (s *ArtifactServiceImpl) CreateOrUpdateArtifact(
 		return errors.New("artifact cannot be nil")
 	}
 
-	exists, err := s.repository.ArtifactExists(ctx, artifact.Id)
+	exists, err := s.repository.ArtifactExists(ctx, artifact.ID)
 	if err != nil {
 		return err
 	}

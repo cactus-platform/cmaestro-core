@@ -7,7 +7,7 @@ import (
 )
 
 type Artifact struct {
-	Id           uuid.UUID `json:"id" gorm:"primaryKey"`
+	ID           uuid.UUID `json:"id" gorm:"primaryKey"`
 	RepositoryID uuid.UUID `json:"repository_id" gorm:"index"`
 
 	Name string `json:"name"`

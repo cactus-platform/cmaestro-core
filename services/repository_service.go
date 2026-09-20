@@ -25,16 +25,11 @@ type RepositoryServiceImpl struct {
 
 func NewRepositoryService(
 	repository repositories.RepositoryRepository,
-	ingest ...IngestStatusReader,
+	ingest IngestStatusReader,
 ) RepositoryService {
-	var ingestService IngestStatusReader
-	if len(ingest) > 0 {
-		ingestService = ingest[0]
-	}
-
 	return &RepositoryServiceImpl{
 		repository: repository,
-		ingest:     ingestService,
+		ingest:     ingest,
 	}
 }
 
@@ -43,7 +38,7 @@ func (s *RepositoryServiceImpl) Get(
 	id uuid.UUID,
 ) (*models.Repository, error) {
 	repository, err := s.repository.Get(ctx, id)
-	if err != nil || s.ingest == nil {
+	if err != nil {
 		return repository, err
 	}
 

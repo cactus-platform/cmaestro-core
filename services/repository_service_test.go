@@ -80,7 +80,7 @@ func TestRepositoryServiceGetAddsIngestStatus(t *testing.T) {
 func TestRepositoryServiceCreateOrUpdate(t *testing.T) {
 	repository := &models.Repository{ID: uuid.New()}
 	fake := &fakeRepositoryRepository{}
-	service := NewRepositoryService(fake)
+	service := NewRepositoryService(fake, &fakeRepositoryIngestReader{})
 
 	if err := service.CreateOrUpdate(context.Background(), repository); err != nil {
 		t.Fatalf("CreateOrUpdate() create error = %v", err)
@@ -100,7 +100,7 @@ func TestRepositoryServiceCreateOrUpdate(t *testing.T) {
 
 func TestRepositoryServicePropagatesErrors(t *testing.T) {
 	wantErr := errors.New("repository dependency failed")
-	repositoryService := NewRepositoryService(&fakeRepositoryRepository{err: wantErr})
+	repositoryService := NewRepositoryService(&fakeRepositoryRepository{err: wantErr}, &fakeRepositoryIngestReader{})
 
 	if _, err := repositoryService.Get(context.Background(), uuid.New()); !errors.Is(err, wantErr) {
 		t.Fatalf("Get() error = %v, want %v", err, wantErr)

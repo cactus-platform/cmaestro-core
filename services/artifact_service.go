@@ -22,16 +22,11 @@ type ArtifactServiceImpl struct {
 
 func NewArtifactService(
 	repository repositories.ArtifactRepository,
-	ingest ...IngestStatusReader,
+	ingest IngestStatusReader,
 ) ArtifactService {
-	var ingestService IngestStatusReader
-	if len(ingest) > 0 {
-		ingestService = ingest[0]
-	}
-
 	return &ArtifactServiceImpl{
 		repository: repository,
-		ingest:     ingestService,
+		ingest:     ingest,
 	}
 }
 
@@ -60,7 +55,7 @@ func (s *ArtifactServiceImpl) GetArtifact(
 	artifactID uuid.UUID,
 ) (*models.Artifact, error) {
 	artifact, err := s.repository.GetArtifact(ctx, artifactID)
-	if err != nil || s.ingest == nil {
+	if err != nil {
 		return artifact, err
 	}
 

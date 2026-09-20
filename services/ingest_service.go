@@ -11,6 +11,9 @@ import (
 
 type IngestService interface {
 	Ingest(ctx context.Context, repository *models.Repository) error
+	Update(ctx context.Context, repository *models.Repository, status models.IngestStatus) error
+	Delete(ctx context.Context, repository *models.Repository) error
+	IngestStatusReader
 }
 
 type IngestStatusReader interface {

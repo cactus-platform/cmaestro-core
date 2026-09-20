@@ -67,7 +67,7 @@ func TestArtifactServiceGetAddsIngestStatus(t *testing.T) {
 
 func TestArtifactServiceCreateOrUpdate(t *testing.T) {
 	repository := &fakeArtifactRepository{}
-	service := NewArtifactService(repository)
+	service := NewArtifactService(repository, &fakeArtifactIngestReader{})
 	artifact := &models.Artifact{ID: uuid.New()}
 
 	if err := service.CreateOrUpdateArtifact(context.Background(), artifact); err != nil {
@@ -88,7 +88,7 @@ func TestArtifactServiceCreateOrUpdate(t *testing.T) {
 
 func TestArtifactServicePropagatesErrors(t *testing.T) {
 	wantErr := errors.New("artifact dependency failed")
-	service := NewArtifactService(&fakeArtifactRepository{err: wantErr})
+	service := NewArtifactService(&fakeArtifactRepository{err: wantErr}, &fakeArtifactIngestReader{})
 
 	if _, err := service.GetArtifact(context.Background(), uuid.New()); !errors.Is(err, wantErr) {
 		t.Fatalf("GetArtifact() error = %v, want %v", err, wantErr)

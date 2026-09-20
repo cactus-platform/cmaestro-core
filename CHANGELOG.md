@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/cactus-platform/cmaestro-core/compare/v1.6.0...v1.7.0) (2026-09-20)
+
+
+### Features
+
+* adds README for Cactus Core Library ([f8a4e08](https://github.com/cactus-platform/cmaestro-core/commit/f8a4e081a76fd5c6b6de29b1cf35baf899c427bc))
+
 # [1.6.0](https://github.com/cactus-platform/cmaestro-core/compare/v1.5.1...v1.6.0) (2026-09-20)
 
 

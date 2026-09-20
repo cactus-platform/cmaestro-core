@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/cactus-platform/cmaestro-core/compare/v1.5.0...v1.5.1) (2026-09-20)
+
+
+### Bug Fixes
+
+* retreives Artifact status from caching db ([ad97ad9](https://github.com/cactus-platform/cmaestro-core/commit/ad97ad98feef65308f6514e42507c8a099f06242))
+
 # [1.5.0](https://github.com/cactus-platform/cmaestro-core/compare/v1.4.1...v1.5.0) (2026-09-20)
 
 

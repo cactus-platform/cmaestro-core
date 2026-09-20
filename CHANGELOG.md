@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/cactus-platform/cmaestro-core/compare/v1.4.1...v1.5.0) (2026-09-20)
+
+
+### Features
+
+* adds Get/Delete methods in Ingest Svc ([0ea94b7](https://github.com/cactus-platform/cmaestro-core/commit/0ea94b7d33c055b236b3f299cc7e2e1636ce65c1))
+
 ## [1.4.1](https://github.com/cactus-platform/cmaestro-core/compare/v1.4.0...v1.4.1) (2026-09-04)
 
 

@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/cactus-platform/cmaestro-core/compare/v1.4.0...v1.4.1) (2026-09-04)
+
+
+### Bug Fixes
+
+* replaces Ingest(repository) to Ingest(*repository) ([0f62432](https://github.com/cactus-platform/cmaestro-core/commit/0f62432b53f545fcf62ab319e354bdc441f072fd))
+
 # [1.4.0](https://github.com/cactus-platform/cmaestro-core/compare/v1.3.2...v1.4.0) (2026-09-04)
 
 

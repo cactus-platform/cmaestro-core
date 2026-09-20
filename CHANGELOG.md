@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/cactus-platform/cmaestro-core/compare/v1.5.1...v1.6.0) (2026-09-20)
+
+
+### Features
+
+* adds testing framework & implement unit tests ([47b11a8](https://github.com/cactus-platform/cmaestro-core/commit/47b11a8ede564fdcc144fa0c1dbbcc5db48797d7))
+
 ## [1.5.1](https://github.com/cactus-platform/cmaestro-core/compare/v1.5.0...v1.5.1) (2026-09-20)
 
 

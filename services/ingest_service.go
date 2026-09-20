@@ -7,8 +7,6 @@ import (
 	"time"
 
 	"github.com/cactus-platform/cmaestro-core/models"
-
-	"github.com/cactus-platform/cmaestro-core/storage/keyval"
 )
 
 type IngestService interface {
@@ -19,11 +17,17 @@ type IngestStatusReader interface {
 	Get(ctx context.Context, repository *models.Repository) (*models.Ingest, error)
 }
 
-type IngestServiceImpl struct {
-	keyVal *keyval.Client
+type IngestStore interface {
+	Set(key string, value string, expiration time.Duration) error
+	Get(key string) (string, error)
+	Delete(key string) error
 }
 
-func NewIngestService(keyVal *keyval.Client) IngestService {
+type IngestServiceImpl struct {
+	keyVal IngestStore
+}
+
+func NewIngestService(keyVal IngestStore) IngestService {
 	return &IngestServiceImpl{keyVal: keyVal}
 }
 

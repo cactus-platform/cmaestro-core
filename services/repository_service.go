@@ -20,13 +20,21 @@ type RepositoryService interface {
 
 type RepositoryServiceImpl struct {
 	repository repositories.RepositoryRepository
+	ingest     IngestStatusReader
 }
 
 func NewRepositoryService(
 	repository repositories.RepositoryRepository,
+	ingest ...IngestStatusReader,
 ) RepositoryService {
+	var ingestService IngestStatusReader
+	if len(ingest) > 0 {
+		ingestService = ingest[0]
+	}
+
 	return &RepositoryServiceImpl{
 		repository: repository,
+		ingest:     ingestService,
 	}
 }
 
@@ -34,7 +42,24 @@ func (s *RepositoryServiceImpl) Get(
 	ctx context.Context,
 	id uuid.UUID,
 ) (*models.Repository, error) {
-	return s.repository.Get(ctx, id)
+	repository, err := s.repository.Get(ctx, id)
+	if err != nil || s.ingest == nil {
+		return repository, err
+	}
+
+	ingest, err := s.ingest.Get(ctx, repository)
+	if err != nil {
+		return nil, err
+	}
+
+	repository.Status = string(ingest.Status)
+	for _, artifact := range repository.Artifacts {
+		if artifact != nil {
+			artifact.Status = string(ingest.Status)
+		}
+	}
+
+	return repository, nil
 }
 
 func (s *RepositoryServiceImpl) Create(

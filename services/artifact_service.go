@@ -17,13 +17,21 @@ type ArtifactService interface {
 
 type ArtifactServiceImpl struct {
 	repository repositories.ArtifactRepository
+	ingest     IngestStatusReader
 }
 
 func NewArtifactService(
 	repository repositories.ArtifactRepository,
+	ingest ...IngestStatusReader,
 ) ArtifactService {
+	var ingestService IngestStatusReader
+	if len(ingest) > 0 {
+		ingestService = ingest[0]
+	}
+
 	return &ArtifactServiceImpl{
 		repository: repository,
+		ingest:     ingestService,
 	}
 }
 
@@ -51,5 +59,16 @@ func (s *ArtifactServiceImpl) GetArtifact(
 	ctx context.Context,
 	artifactID uuid.UUID,
 ) (*models.Artifact, error) {
-	return s.repository.GetArtifact(ctx, artifactID)
+	artifact, err := s.repository.GetArtifact(ctx, artifactID)
+	if err != nil || s.ingest == nil {
+		return artifact, err
+	}
+
+	ingest, err := s.ingest.Get(ctx, &models.Repository{ID: artifact.RepositoryID})
+	if err != nil {
+		return nil, err
+	}
+
+	artifact.Status = string(ingest.Status)
+	return artifact, nil
 }

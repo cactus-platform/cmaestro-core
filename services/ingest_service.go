@@ -15,6 +15,10 @@ type IngestService interface {
 	Ingest(ctx context.Context, repository *models.Repository) error
 }
 
+type IngestStatusReader interface {
+	Get(ctx context.Context, repository *models.Repository) (*models.Ingest, error)
+}
+
 type IngestServiceImpl struct {
 	keyVal *keyval.Client
 }

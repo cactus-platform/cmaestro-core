@@ -60,6 +60,25 @@ func TestRepositoryRepositoryGetNotFound(t *testing.T) {
 	}
 }
 
+func TestRepositoryRepositoryList(t *testing.T) {
+	repository, mock, cleanup := newRepositoryRepositoryTest(t)
+	defer cleanup()
+
+	mock.ExpectQuery(`SELECT \* FROM "repositories"`).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "name"}))
+
+	got, err := repository.List(context.Background())
+	if err != nil {
+		t.Fatalf("List() error = %v", err)
+	}
+	if len(got) != 0 {
+		t.Fatalf("List() returned %d repositories, want 0", len(got))
+	}
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Fatalf("unmet SQL expectations: %v", err)
+	}
+}
+
 func TestRepositoryRepositoryExists(t *testing.T) {
 	repository, mock, cleanup := newRepositoryRepositoryTest(t)
 	defer cleanup()

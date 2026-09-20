@@ -11,12 +11,13 @@ import (
 )
 
 type fakeRepositoryRepository struct {
-	repository *models.Repository
-	exists     bool
-	err        error
-	created    *models.Repository
-	revised    *models.Repository
-	updated    *models.Repository
+	repository   *models.Repository
+	repositories []*models.Repository
+	exists       bool
+	err          error
+	created      *models.Repository
+	revised      *models.Repository
+	updated      *models.Repository
 }
 
 func (f *fakeRepositoryRepository) Create(_ context.Context, repository *models.Repository) error {
@@ -31,6 +32,10 @@ func (f *fakeRepositoryRepository) CreateRevision(_ context.Context, repository 
 
 func (f *fakeRepositoryRepository) Get(_ context.Context, _ uuid.UUID) (*models.Repository, error) {
 	return f.repository, f.err
+}
+
+func (f *fakeRepositoryRepository) List(_ context.Context) ([]*models.Repository, error) {
+	return f.repositories, f.err
 }
 
 func (f *fakeRepositoryRepository) Update(_ context.Context, repository *models.Repository) error {
@@ -74,6 +79,38 @@ func TestRepositoryServiceGetAddsIngestStatus(t *testing.T) {
 	}
 	if status.seen != repository {
 		t.Fatal("expected ingest status lookup to receive the repository")
+	}
+}
+
+func TestRepositoryServiceListAddsIngestStatus(t *testing.T) {
+	repositories := []*models.Repository{
+		{
+			ID: uuid.New(),
+			Artifacts: []*models.Artifact{{
+				ID: uuid.New(),
+			}},
+		},
+		{ID: uuid.New()},
+	}
+	status := &fakeRepositoryIngestReader{value: &models.Ingest{Status: "processing"}}
+	service := NewRepositoryService(&fakeRepositoryRepository{repositories: repositories}, status)
+
+	got, err := service.List(context.Background())
+	if err != nil {
+		t.Fatalf("List() error = %v", err)
+	}
+	if len(got) != len(repositories) {
+		t.Fatalf("List() returned %d repositories, want %d", len(got), len(repositories))
+	}
+	for _, repository := range got {
+		if repository.Status != "processing" {
+			t.Fatalf("repository status = %q, want processing", repository.Status)
+		}
+		for _, artifact := range repository.Artifacts {
+			if artifact.Status != "processing" {
+				t.Fatalf("artifact status = %q, want processing", artifact.Status)
+			}
+		}
 	}
 }
 

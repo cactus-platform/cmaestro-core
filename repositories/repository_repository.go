@@ -15,6 +15,7 @@ var ErrRepositoryNotFound = errors.New("repository not found")
 type RepositoryRepository interface {
 	Create(ctx context.Context, repository *models.Repository) error
 	CreateRevision(ctx context.Context, repository *models.Repository) error
+	List(ctx context.Context) ([]*models.Repository, error)
 	Get(ctx context.Context, id uuid.UUID) (*models.Repository, error)
 	Update(ctx context.Context, repository *models.Repository) error
 	Exists(ctx context.Context, id uuid.UUID) (bool, error)
@@ -45,6 +46,15 @@ func (r *RepositoryRepositoryImpl) Get(
 		return nil, ErrRepositoryNotFound
 	}
 	return &repository, err
+}
+
+func (r *RepositoryRepositoryImpl) List(ctx context.Context) ([]*models.Repository, error) {
+	var repositories []*models.Repository
+	err := r.db.WithContext(ctx).
+		Preload("Artifacts").
+		Find(&repositories).
+		Error
+	return repositories, err
 }
 
 func (r *RepositoryRepositoryImpl) Create(

@@ -12,6 +12,7 @@ import (
 type RepositoryService interface {
 	Create(ctx context.Context, repository *models.Repository) error
 	CreateRevision(ctx context.Context, repository *models.Repository) error
+	List(ctx context.Context) ([]*models.Repository, error)
 	Get(ctx context.Context, id uuid.UUID) (*models.Repository, error)
 	Update(ctx context.Context, repository *models.Repository) error
 	Exists(ctx context.Context, id uuid.UUID) (bool, error)
@@ -42,9 +43,38 @@ func (s *RepositoryServiceImpl) Get(
 		return repository, err
 	}
 
-	ingest, err := s.ingest.Get(ctx, repository)
+	if err := s.applyStatus(ctx, repository); err != nil {
+		return nil, err
+	}
+
+	return repository, nil
+}
+
+func (s *RepositoryServiceImpl) List(ctx context.Context) ([]*models.Repository, error) {
+	repositories, err := s.repository.List(ctx)
 	if err != nil {
 		return nil, err
+	}
+
+	for _, repository := range repositories {
+		if repository == nil {
+			continue
+		}
+		if err := s.applyStatus(ctx, repository); err != nil {
+			return nil, err
+		}
+	}
+
+	return repositories, nil
+}
+
+func (s *RepositoryServiceImpl) applyStatus(
+	ctx context.Context,
+	repository *models.Repository,
+) error {
+	ingest, err := s.ingest.Get(ctx, repository)
+	if err != nil {
+		return err
 	}
 
 	repository.Status = string(ingest.Status)
@@ -53,8 +83,7 @@ func (s *RepositoryServiceImpl) Get(
 			artifact.Status = string(ingest.Status)
 		}
 	}
-
-	return repository, nil
+	return nil
 }
 
 func (s *RepositoryServiceImpl) Create(

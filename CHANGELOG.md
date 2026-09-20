@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/cactus-platform/cmaestro-core/compare/v1.7.0...v1.8.0) (2026-09-20)
+
+
+### Features
+
+* adds List method inside RepositoryService|Repository ([1ab7cd7](https://github.com/cactus-platform/cmaestro-core/commit/1ab7cd71f036efbdc51f3f92cfa9e1bccd8846fb))
+
 # [1.7.0](https://github.com/cactus-platform/cmaestro-core/compare/v1.6.0...v1.7.0) (2026-09-20)
 
 
